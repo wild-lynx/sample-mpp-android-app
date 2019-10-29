@@ -13,5 +13,6 @@ pluginManagement {
     }
 }
 rootProject.name = 'sample-mpp-android-app'
+enableFeaturePreview('GRADLE_METADATA')
 
 include ':app'

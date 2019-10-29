@@ -33,7 +33,15 @@ android {
     }
 
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
+        // work around https://github.com/Kotlin/kotlinx.coroutines/issues/1064 and the related problems
+        pickFirst 'META-INF/ktor-http.kotlin_module'
+        pickFirst 'META-INF/ktor-utils.kotlin_module'
+        pickFirst 'META-INF/ktor-http-cio.kotlin_module'
+        pickFirst 'META-INF/ktor-client-core.kotlin_module'
+        pickFirst 'META-INF/atomicfu.kotlin_module'
+        pickFirst 'META-INF/kotlinx-io.kotlin_module'
+        pickFirst 'META-INF/kotlinx-coroutines-io.kotlin_module'
+        pickFirst 'META-INF/kotlinx-coroutines-core.kotlin_module'
     }
 }
 
@@ -51,6 +59,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "io.ktor:ktor-client:$ktor_version"
+                implementation "io.ktor:ktor-client-core:$ktor_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
             }
         }
