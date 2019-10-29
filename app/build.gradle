@@ -31,6 +31,10 @@ android {
             minifyEnabled false
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
@@ -46,6 +50,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation "io.ktor:ktor-client:$ktor_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
             }
         }
         commonTest {
@@ -58,6 +64,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib')
                 implementation "com.jaredrummler:android-device-names:$android_device_names" // see https://github.com/jaredrummler/AndroidDeviceNames for the details
+                implementation "io.ktor:ktor-client-android:$ktor_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
             }
         }
         androidTest {
