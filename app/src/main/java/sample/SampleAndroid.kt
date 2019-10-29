@@ -25,6 +25,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        header.text = getDeviceModel()
+        deviceInfo.text = getFullDeviceInfo()
+
         val weatherApi = WeatherApi()
         launch(Dispatchers.Main) {
             try {
@@ -34,8 +38,5 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
             }
         }
-        setContentView(R.layout.activity_main)
-        header.text = getDeviceModel()
-        deviceInfo.text = getFullDeviceInfo()
     }
 }
