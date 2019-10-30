@@ -1,12 +1,14 @@
 plugins {
-    id "org.jetbrains.kotlin.multiplatform" version "$kotlin_version"
+    id "org.jetbrains.kotlin.multiplatform"
 }
 
 repositories {
     google()
     jcenter()
     mavenCentral()
+    maven { url "https://kotlin.bintray.com/kotlinx" }
     maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 
     // a repository to download specific Kotlin Gradle plugin artifacts directly form TeamCity
     maven {
@@ -15,12 +17,13 @@ repositories {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlinx-serialization'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId 'org.jetbrains.kotlin.mpp_app_android'
-        minSdkVersion 15
+        minSdkVersion 24 // required to be able to use static interfaces in okhttp
         targetSdkVersion 28
         versionCode 1
         versionName '1.0'
@@ -33,15 +36,28 @@ android {
     }
 
     packagingOptions {
-        // work around https://github.com/Kotlin/kotlinx.coroutines/issues/1064 and the related problems
+        /* work around https://github.com/Kotlin/kotlinx.coroutines/issues/1064 and the related problems */
         pickFirst 'META-INF/ktor-http.kotlin_module'
         pickFirst 'META-INF/ktor-utils.kotlin_module'
         pickFirst 'META-INF/ktor-http-cio.kotlin_module'
         pickFirst 'META-INF/ktor-client-core.kotlin_module'
+        pickFirst 'META-INF/ktor-client-serialization.kotlin_module'
+        pickFirst 'META-INF/ktor-client-json.kotlin_module'
+        pickFirst 'META-INF/kotlinx-serialization-runtime.kotlin_module'
         pickFirst 'META-INF/atomicfu.kotlin_module'
         pickFirst 'META-INF/kotlinx-io.kotlin_module'
         pickFirst 'META-INF/kotlinx-coroutines-io.kotlin_module'
         pickFirst 'META-INF/kotlinx-coroutines-core.kotlin_module'
+    }
+
+    /*
+        Enable desugaring to allow usage of `dexing-min-sdk=24` and, therefore,
+        transform artifact 'okhttp.jar (com.squareup.okhttp3:okhttp:3.14.2)'
+        to match attributes
+        */
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
     }
 }
 
@@ -54,12 +70,26 @@ dependencies {
 
 kotlin {
     android("android")
+
+    // allows using `@UseExperimental` annotation for serialization
+    targets.all {
+        compilations.all {
+            kotlinOptions {
+                freeCompilerArgs = ["-Xuse-experimental=kotlin.Experimental"]
+            }
+        }
+    }
+
     sourceSets {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "io.ktor:ktor-client:$ktor_version"
                 implementation "io.ktor:ktor-client-core:$ktor_version"
+                implementation "io.ktor:ktor-client-json:$ktor_version"
+                implementation("io.ktor:ktor-client-serialization:$ktor_version")
+                //implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serialization_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
             }
         }
@@ -72,8 +102,14 @@ kotlin {
         androidMain {
             dependencies {
                 implementation kotlin('stdlib')
-                implementation "com.jaredrummler:android-device-names:$android_device_names" // see https://github.com/jaredrummler/AndroidDeviceNames for the details
-                implementation "io.ktor:ktor-client-android:$ktor_version"
+                implementation "com.jaredrummler:android-device-names:$android_device_names_version" // see https://github.com/jaredrummler/AndroidDeviceNames for the details
+                // removed in favor of `ktor-client-json-jvm`
+                // implementation "io.ktor:ktor-client-android:$ktor_version"
+                implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
+                implementation "io.ktor:ktor-client-okhttp:$ktor_version"
+                implementation("io.ktor:ktor-client-serialization:$ktor_version")
+                implementation("io.ktor:ktor-client-serialization-jvm:$ktor_version")
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
             }
         }
