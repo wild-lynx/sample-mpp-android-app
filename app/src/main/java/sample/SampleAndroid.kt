@@ -2,7 +2,8 @@ package sample
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.support.v7.widget.LinearLayoutManager
+import io.citiesList
 import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.util.InternalAPI
@@ -26,24 +27,48 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job
 
+
+    private fun initializeWeatherList() {
+        weatherListView.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = WeatherListViewAdapter()
+        }
+    }
+
+    inline fun <reified T> Any.safeCast() = this as? T
+
     @InternalAPI // to allow usage of `OkHttpEngine` below
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initializeWeatherList()
+
         /* Set the text with the device info */
         header.text = getDeviceModel()
         deviceInfo.text = getFullDeviceInfo()
 
-        /* Download and show the weather info in a toast */
+        /* Download and show the weather info */
         val weatherApi = WeatherApi(OkHttpEngine(OkHttpConfig()))
+        var resultStr: String = "Getting the weather..."
+
         launch(Dispatchers.Main) {
             try {
-                val result = withContext(Dispatchers.IO) { weatherApi.fetchWeather() }
-                Toast.makeText(this@MainActivity, result.toString(), Toast.LENGTH_LONG).show()
+                val resultWeatherList = mutableListOf<WeatherApi.Weather>()
+                citiesList.forEach {
+                    resultWeatherList.add(withContext(Dispatchers.IO) { weatherApi.fetchWeather(it) })
+                }
+                //val result = withContext(Dispatchers.IO) { weatherApi.fetchWeather() }
+/*                resultStr = result.toString()
+                weatherView.text = resultStr*/
+                weatherListView.adapter?.safeCast<WeatherListViewAdapter>()
+                    ?.updWeatherList(resultWeatherList)
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
+                resultStr = e.message.toString()
+                weatherView.text = resultStr
             }
         }
+
+        job.complete()
     }
 }

@@ -12,14 +12,14 @@ import kotlinx.serialization.Serializable
 
 class WeatherApi(private val engine: HttpClientEngine) {
     companion object {
-        private const val baseUrl = "https://api.openweathermap.org"
+        private const val baseUrl = "https://api.openweathermap.org/data/2.5"
     }
 
     @Serializable
-    data class Coordinate(val lon: Float, val lat: Float)
+    data class Wind(val speed: Float, val deg: Float)
 
     @Serializable
-    data class Weather(val coord: Coordinate, val base: String)
+    data class Weather(val wind: Wind, val visibility: String, val name: String)
 
     @UseExperimental(UnstableDefault::class)
     private val client by lazy {
@@ -37,9 +37,9 @@ class WeatherApi(private val engine: HttpClientEngine) {
      * */
     suspend fun fetchWeather(city: String = "Munich"): Weather {
         return (client.get {
-            url("$baseUrl/data/2.5/weather?q=$city,de&appid=$weatherApiKey")
+            url("$baseUrl/weather?q=$city,de&appid=$weatherApiKey")
         }) ?: (client.get {
-            url("$baseUrl/data/2.5/weather?q=Munich,de&appid=$weatherApiKey")
+            url("$baseUrl/weather?q=Munich,de&appid=$weatherApiKey")
         })
     }
 }
