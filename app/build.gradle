@@ -35,6 +35,12 @@ android {
         }
     }
 
+    // allow Activities placement under `kotlin` dirs
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+
     packagingOptions {
         /* work around https://github.com/Kotlin/kotlinx.coroutines/issues/1064 and the related problems */
         pickFirst 'META-INF/ktor-http.kotlin_module'
@@ -96,14 +102,15 @@ kotlin {
         }
         commonTest {
             dependencies {
-        		implementation kotlin('test-common')
-        		implementation kotlin('test-annotations-common')
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
             }
         }
         androidMain {
             dependencies {
                 implementation kotlin('stdlib')
-                implementation "com.jaredrummler:android-device-names:$android_device_names_version" // see https://github.com/jaredrummler/AndroidDeviceNames for the details
+                implementation "com.jaredrummler:android-device-names:$android_device_names_version"
+                // see https://github.com/jaredrummler/AndroidDeviceNames for the details
                 // removed in favor of `ktor-client-json-jvm`
                 // implementation "io.ktor:ktor-client-android:$ktor_version"
                 implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
