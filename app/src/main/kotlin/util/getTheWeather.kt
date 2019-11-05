@@ -7,7 +7,8 @@ import kotlinx.coroutines.withContext
 
 suspend fun getTheWeather(
     resultWeatherList: MutableList<WeatherApi.Weather>,
-    weatherApi: WeatherApi
+    weatherApi: WeatherApi,
+    cList: MutableList<String> = citiesList
 ) {
     citiesList.forEach {
         resultWeatherList.add(withContext(Dispatchers.IO) { weatherApi.fetchWeather(it) })

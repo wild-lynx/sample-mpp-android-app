@@ -8,5 +8,6 @@ class UtilsTest {
 
     @Test
     fun getDeviceModel() {
+
     }
 }
