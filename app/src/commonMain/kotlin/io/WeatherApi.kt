@@ -32,14 +32,14 @@ class WeatherApi(private val engine: HttpClientEngine) {
 
     /**
      * Get the weather in the required city.
-     * If the city isn't specified or invalid, the default "Munich" will be used.
+     * If the city isn't specified or invalid, the default city ($defaultCity) will be used.
      * @return Weather serialized obj
      * */
-    suspend fun fetchWeather(city: String = "Munich"): Weather {
+    suspend fun fetchWeather(city: String = defaultCity): Weather {
         return (client.get {
             url("$baseUrl/weather?q=$city,de&appid=$weatherApiKey")
         }) ?: (client.get {
-            url("$baseUrl/weather?q=Munich,de&appid=$weatherApiKey")
+            url("$baseUrl/weather?q=$default404City,de&appid=$weatherApiKey")
         })
     }
 }
