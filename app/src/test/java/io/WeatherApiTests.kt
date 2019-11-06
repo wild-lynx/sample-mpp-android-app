@@ -32,20 +32,44 @@ class WeatherApiTests {
         mainThreadSurrogate.close()
     }*/
 
+    // commented out due to https://github.com/Kotlin/kotlinx.coroutines/issues/1647
+    /*
     @Test
     @ExperimentalCoroutinesApi
-    fun getTheWeather_EmptyCityTest() = runBlocking {
+    fun getTheWeather_NoCityListTest() = runBlocking {
+        // using `runBlocking` instead of `runBlockingTest` because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
+        val resultWeatherList = mutableListOf<WeatherApi.Weather>()
+        val deferred = async {
+            // no city list specified, so the default city list ($defaultCitiesList) value should be used
+            getTheWeather(resultWeatherList, weatherApi)
+
+            val controlList = mutableListOf<String>()
+            resultWeatherList.forEach { controlList.add(it.name) }
+
+            assertEquals(controlList, defaultCitiesList)
+        }
+        deferred.await()
+    }
+    */
+
+    @Test
+    @ExperimentalCoroutinesApi
+    fun getTheWeather_EmptyCityListTest() = runBlocking {
         // using `runBlocking` instead of `runBlockingTest` because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
         val resultWeatherList =
-            mutableListOf<WeatherApi.Weather>() // empty list, so the default default city ($defaultCity) value should be used
-            val deferred = async {
-            getTheWeather(resultWeatherList, weatherApi, mutableListOf())
+            mutableListOf<WeatherApi.Weather>() // empty list, so the default city ($defaultCity) value should be used
+        val deferred = async {
+            getTheWeather(resultWeatherList, weatherApi, citiesList = mutableListOf())
             assertEquals(resultWeatherList[0].name, defaultCity)
         }
         deferred.await()
     }
 
-    @org.junit.Test
+/*
+
+*/
+
+    @Test
     fun fetchWeatherTest() {
 
     }

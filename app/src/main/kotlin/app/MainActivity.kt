@@ -11,6 +11,7 @@ import kotlinx.coroutines.*
 import sample.R
 import util.WeatherListViewAdapter
 import io.WeatherApi
+import io.defaultCitiesList
 import util.getDeviceModel
 import util.getFullDeviceInfo
 import util.getTheWeather
@@ -56,8 +57,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         val weatherApi = WeatherApi(OkHttpEngine(OkHttpConfig()))
         launch(Dispatchers.Main) {
             val resultWeatherList = mutableListOf<WeatherApi.Weather>()
+            val cList = defaultCitiesList
             try {
-                getTheWeather(resultWeatherList, weatherApi)
+                // using the explicit syntax instead of default value for $citiesList
+                // due to https://github.com/Kotlin/kotlinx.coroutines/issues/1647
+                getTheWeather(resultWeatherList, weatherApi, cList)
                 displayTheWeather(resultWeatherList)
             } catch (e: Exception) {
                 weatherDebugInfo.text = e.message.toString()

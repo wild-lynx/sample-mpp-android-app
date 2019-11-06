@@ -1,7 +1,7 @@
 package util
 
 import io.WeatherApi
-import io.citiesList
+import io.defaultCitiesList
 
 /*
 The function is multiplatform because of the different
@@ -10,5 +10,5 @@ The function is multiplatform because of the different
 expect suspend fun getTheWeather(
     resultWeatherList: MutableList<WeatherApi.Weather>,
     weatherApi: WeatherApi,
-    cList: MutableList<String> = citiesList
+    citiesList: MutableList<String> = defaultCitiesList
 )
