@@ -5,15 +5,11 @@ import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.util.InternalAPI
 import kotlinx.coroutines.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.*
 import util.getTheWeather
-import kotlin.coroutines.CoroutineContext
-import kotlin.test.AfterTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@InternalAPI // to allow usage of `OkHttpEngine` in `showTheWeather` fun
+@InternalAPI // to allow usage of `OkHttpEngine` in `WeatherApi` initialization
 class WeatherApiTests {
     @UseExperimental(kotlinx.coroutines.ObsoleteCoroutinesApi::class)
     val weatherApi = WeatherApi(OkHttpEngine(OkHttpConfig()))
@@ -42,10 +38,15 @@ class WeatherApiTests {
         // using `runBlocking` instead of `runBlockingTest` because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
         val resultWeatherList =
             mutableListOf<WeatherApi.Weather>() // empty list, so the default default city ($defaultCity) value should be used
-        val deferred = async {
+            val deferred = async {
             getTheWeather(resultWeatherList, weatherApi, mutableListOf())
             assertEquals(resultWeatherList[0].name, defaultCity)
         }
         deferred.await()
+    }
+
+    @org.junit.Test
+    fun fetchWeatherTest() {
+
     }
 }

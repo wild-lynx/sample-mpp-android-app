@@ -5,12 +5,16 @@ import io.citiesList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-suspend fun getTheWeather(
+actual suspend fun getTheWeather(
     resultWeatherList: MutableList<WeatherApi.Weather>,
     weatherApi: WeatherApi,
-    cList: MutableList<String> = citiesList
+    cList: MutableList<String>
 ) {
-    citiesList.forEach {
-        resultWeatherList.add(withContext(Dispatchers.IO) { weatherApi.fetchWeather(it) })
+    if (cList.size == 0) {
+        resultWeatherList.add(withContext(Dispatchers.IO) { weatherApi.fetchWeather() })
+    } else {
+        cList.forEach {
+            resultWeatherList.add(withContext(Dispatchers.IO) { weatherApi.fetchWeather(it) })
+        }
     }
 }
