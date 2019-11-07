@@ -8,7 +8,7 @@ import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.util.InternalAPI
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
-import sample.R
+import app.R
 import util.WeatherListViewAdapter
 import io.WeatherApi
 import io.defaultCitiesList

@@ -11,8 +11,22 @@ import kotlin.test.assertEquals
 
 @InternalAPI // to allow usage of `OkHttpEngine` in `WeatherApi` initialization
 class WeatherApiTests {
-    @UseExperimental(kotlinx.coroutines.ObsoleteCoroutinesApi::class)
+    // @UseExperimental(kotlinx.coroutines.ObsoleteCoroutinesApi::class)
     val weatherApi = WeatherApi(OkHttpEngine(OkHttpConfig()))
+
+    @Test
+    fun fetchWeather_NoCity() = runBlocking {
+        // using `runBlocking` instead of `runBlockingTest` because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
+        val result = weatherApi.fetchWeather()
+        assertEquals(result.name, defaultCity)
+    }
+
+    @Test
+    fun fetchWeather_UnknownCity() = runBlocking {
+        // using `runBlocking` instead of `runBlockingTest` because of https://github.com/Kotlin/kotlinx.coroutines/issues/1204
+        val result = weatherApi.fetchWeather("unknown")
+        assertEquals(result.name, default404City)
+    }
 
     // commented out due to the replacement of `runBlockingTest` with `runBlocking` — see the comment below
 /*
@@ -63,14 +77,5 @@ class WeatherApiTests {
             assertEquals(resultWeatherList[0].name, defaultCity)
         }
         deferred.await()
-    }
-
-/*
-
-*/
-
-    @Test
-    fun fetchWeatherTest() {
-
     }
 }

@@ -4,9 +4,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import app.R
 import kotlinx.android.synthetic.main.weatherlist_row.view.*
 import io.WeatherApi
-import sample.R
 
 
 class WeatherListViewAdapter : RecyclerView.Adapter<WeatherListViewAdapter.ViewHolder>() {

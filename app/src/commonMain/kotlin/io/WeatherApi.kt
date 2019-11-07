@@ -36,10 +36,14 @@ class WeatherApi(private val engine: HttpClientEngine) {
      * @return Weather serialized obj
      * */
     suspend fun fetchWeather(city: String = defaultCity): Weather {
-        return (client.get {
-            url("$baseUrl/weather?q=$city,de&appid=$weatherApiKey")
-        }) ?: (client.get {
-            url("$baseUrl/weather?q=$default404City,de&appid=$weatherApiKey")
-        })
+        return try {
+            (client.get {
+                url("$baseUrl/weather?q=$city,de&appid=$weatherApiKey")
+            })
+        } catch (exception: Exception) {
+            (client.get {
+                url("$baseUrl/weather?q=$default404City,de&appid=$weatherApiKey")
+            })
+        }
     }
 }
