@@ -1,149 +1,129 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+
 plugins {
-    id "org.jetbrains.kotlin.multiplatform"
+    id("com.android.application")
+    kotlin("multiplatform")
+    kotlin("android.extensions")
+    kotlin("plugin.serialization")
 }
 
-repositories {
-    google()
-    jcenter()
-    mavenCentral()
-    maven { url "https://kotlin.bintray.com/kotlinx" }
-    maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-
-    // a repository to download specific Kotlin Gradle plugin artifacts directly form TeamCity
-    maven {
-        url "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:$custom_build_id/artifacts/content/maven"
-    }
-}
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlinx-serialization'
+val javaVersion = JavaVersion.VERSION_1_8
+val androidSourceSetsRoot = File("src/android")
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion(29)
     defaultConfig {
-        applicationId 'org.jetbrains.kotlin.mpp_app_android'
-        minSdkVersion 24 // required to be able to use static interfaces in okhttp
-        targetSdkVersion 28
-        versionCode 1
-        versionName '1.0'
-        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        applicationId = "org.jetbrains.kotlin.mpp_app_android"
+        minSdkVersion(24) // required to be able to use static interfaces in okhttp
+        targetSdkVersion(29)
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        release {
-            minifyEnabled false
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-
-    // allow Activities placement under `kotlin` dirs
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-    }
-
     packagingOptions {
-        /* work around https://github.com/Kotlin/kotlinx.coroutines/issues/1064 and the related problems */
-        pickFirst 'META-INF/ktor-http.kotlin_module'
-        pickFirst 'META-INF/ktor-utils.kotlin_module'
-        pickFirst 'META-INF/ktor-http-cio.kotlin_module'
-        pickFirst 'META-INF/ktor-client-core.kotlin_module'
-        pickFirst 'META-INF/ktor-client-serialization.kotlin_module'
-        pickFirst 'META-INF/ktor-client-json.kotlin_module'
-        pickFirst 'META-INF/kotlinx-serialization-runtime.kotlin_module'
-        pickFirst 'META-INF/atomicfu.kotlin_module'
-        pickFirst 'META-INF/kotlinx-io.kotlin_module'
-        pickFirst 'META-INF/kotlinx-coroutines-io.kotlin_module'
-        pickFirst 'META-INF/kotlinx-coroutines-core.kotlin_module'
+        // workaround for https://github.com/Kotlin/kotlinx.coroutines/issues/1064 and related problems
+        exclude("META-INF/**.kotlin_module")
     }
-
-    /*
-        Enable desugaring to allow usage of `dexing-min-sdk=24` and, therefore,
-        transform artifact 'okhttp.jar (com.squareup.okhttp3:okhttp:3.14.2)'
-        to match attributes
-        */
+    // Enable desugaring to allow usage of `dexing-min-sdk=24` and, therefore, transform
+    // artifact 'okhttp.jar (com.squareup.okhttp3:okhttp:3.14.2)' to match attributes
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+    }
+    sourceSets.all {
+        // nest each Android source set inside `androidSourceSetsRoot`
+        val oldSourceSetRoot = name
+        val newSourceSetRoot = File(androidSourceSetsRoot, oldSourceSetRoot)
+        setRoot(newSourceSetRoot.path)
+
+        // allow source files in `kotlin` folders
+        java.srcDir(File(newSourceSetRoot, "kotlin"))
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha02'
-    testImplementation 'junit:junit:4.12'
+    commonMainImplementation(enforcedPlatform(kotlin("bom")))
+    commonMainImplementation(enforcedPlatform(ktor("bom", "1.2.5")))
+    commonMainImplementation(enforcedPlatform(kotlinx("coroutines-bom", "1.3.2")))
 }
 
 kotlin {
-    android("android") {
+    val android = android("androidApp") {
         compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-    }
-
-    // allows using `@UseExperimental` annotation for serialization
-    targets.all {
-        compilations.all {
-            kotlinOptions {
-                freeCompilerArgs = ["-Xuse-experimental=kotlin.Experimental"]
-            }
+            kotlinOptions.jvmTarget = javaVersion.toString()
         }
     }
 
     sourceSets {
+        /** Returns the multiplatform [KotlinSourceSet] of the provided Android-specific [srcSet] name. */
+        operator fun KotlinAndroidTarget.invoke(srcSet: String, setup: KotlinSourceSet.() -> Unit) =
+            named(name + srcSet.capitalize(), setup)
+
+        all {
+            listOf(
+                "kotlin.Experimental"
+            ).forEach(languageSettings::useExperimentalAnnotation)
+        }
         commonMain {
             dependencies {
-                implementation kotlin('stdlib-common')
-                implementation "io.ktor:ktor-client:$ktor_version"
-                implementation "io.ktor:ktor-client-core:$ktor_version"
-                implementation "io.ktor:ktor-client-json:$ktor_version"
-                implementation("io.ktor:ktor-client-serialization:$ktor_version")
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serialization_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
+                implementation(kotlin("stdlib-common"))
+                implementation(kotlinx("coroutines-core-common"))
+                implementation(kotlinx("serialization-runtime-common"))
+                implementation(ktor("client-serialization"))
             }
         }
         commonTest {
             dependencies {
-                implementation kotlin('test-annotations-common')
-                implementation kotlin('test-common')
-                implementation "io.ktor:ktor-client:$ktor_version"
-                implementation "io.ktor:ktor-client-core:$ktor_version"
-                implementation "io.ktor:ktor-client-json:$ktor_version"
-                implementation "io.ktor:ktor-client-serialization:$ktor_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serialization_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
             }
         }
-        androidMain {
+        android("main") {
             dependencies {
-                implementation kotlin('stdlib')
-                // see https://github.com/jaredrummler/AndroidDeviceNames for the details
-                implementation "com.jaredrummler:android-device-names:$android_device_names_version"
-                // removed in favor of `ktor-client-json-jvm`
-                // implementation "io.ktor:ktor-client-android:$ktor_version"
-                implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
-                implementation "io.ktor:ktor-client-okhttp:$ktor_version"
-                implementation("io.ktor:ktor-client-serialization:$ktor_version")
-                implementation("io.ktor:ktor-client-serialization-jvm:$ktor_version")
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+                implementation(kotlin("stdlib-jdk" + javaVersion.majorVersion))
+                implementation(kotlinx("coroutines-android"))
+                implementation(kotlinx("serialization-runtime"))
+                implementation(ktor("client-serialization-jvm"))
+                implementation(ktor("client-okhttp"))
+                implementation(androidx("appcompat:appcompat", "1.1.0"))
+                implementation(androidx("recyclerview:recyclerview", "1.0.0"))
+                implementation(androidx("constraintlayout:constraintlayout", "1.1.3"))
+                implementation("com.jaredrummler:android-device-names:1.1.9") // GitHub: https://git.io/JeVpP
             }
         }
-        androidTest {
+        android("test") {
             dependencies {
-                implementation kotlin('test')
-                implementation kotlin('test-junit')
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+                implementation(kotlin("test"))
+                implementation(kotlin("test-junit"))
+                implementation("junit:junit:4.12")
+            }
+        }
+        android("androidTest") {
+            dependencies {
+                implementation(androidx("test:runner", "1.2.0"))
+                implementation(androidx("test.ext:junit-ktx", "1.1.1"))
+                implementation(androidx("test.espresso:espresso-core", "3.2.0"))
             }
         }
     }
 }
+
+//region utils
+
+fun kotlinx(module: String, version: String? = null): Any =
+    "org.jetbrains.kotlinx:kotlinx-$module${version?.let { ":$it" } ?: ""}"
+
+fun ktor(module: String, version: String? = null): Any =
+    "io.ktor:ktor-$module${version?.let { ":$it" } ?: ""}"
+
+fun androidx(groupAndModule: String, version: String? = null): Any =
+    "androidx.$groupAndModule${version?.let { ":$it" } ?: ""}"
+
+//endregion
