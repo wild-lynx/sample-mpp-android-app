@@ -1,18 +1,20 @@
 package app
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.WeatherApi
+import io.defaultCitiesList
 import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.engine.okhttp.OkHttpEngine
 import io.ktor.util.InternalAPI
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.*
-import app.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import util.WeatherListViewAdapter
-import io.WeatherApi
-import io.defaultCitiesList
 import util.getDeviceModel
 import util.getFullDeviceInfo
 import util.getTheWeather

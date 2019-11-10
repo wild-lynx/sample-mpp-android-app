@@ -1,12 +1,12 @@
 package util
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import app.R
-import kotlinx.android.synthetic.main.weatherlist_row.view.*
 import io.WeatherApi
+import kotlinx.android.synthetic.main.weatherlist_row.view.*
 
 
 class WeatherListViewAdapter : RecyclerView.Adapter<WeatherListViewAdapter.ViewHolder>() {
