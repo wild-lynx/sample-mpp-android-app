@@ -1,3 +1,5 @@
+package app
+
 import androidx.lifecycle.Lifecycle
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -11,10 +13,7 @@ import io.ktor.util.InternalAPI
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import sample.R
 
-// Has some problems with instrumentation (regarding MPP) so far
-/*
 @InternalAPI
 @RunWith(AndroidJUnit4::class)
 class UIRefreshingTests {
@@ -32,10 +31,10 @@ class UIRefreshingTests {
             )
         )
         val scenario = activityScenarioRule.scenario
-        scenario.moveToState(Lifecycle.State.CREATED)
+        scenario.moveToState(Lifecycle.State.RESUMED)
         scenario.onActivity { activity ->
             activity.displayTheWeather(resultWeatherListMock)
         }
-        onView(withId(R.id.weatherListView)).check(matches(withText("TestCity")))
+        onView(withId(R.id.name)).check(matches(withText("TestCity")))
     }
-}*/
+}

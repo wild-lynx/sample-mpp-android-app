@@ -2,6 +2,7 @@ package app
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.engine.okhttp.OkHttpEngine
@@ -69,7 +70,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         }
     }
 
-    private fun displayTheWeather(resultWeatherList: MutableList<WeatherApi.Weather>) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal fun displayTheWeather(resultWeatherList: MutableList<WeatherApi.Weather>) {
         // clean the "loading" placeholder
         weatherDebugInfo.text = ""
         weatherListView.adapter?.safeCast<WeatherListViewAdapter>()
