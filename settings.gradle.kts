@@ -1,5 +1,7 @@
 rootProject.name = "sample-mpp-android-app"
 
+gradleWrapper("5.6.4", Wrapper.DistributionType.ALL)
+
 pluginManagement {
     plugins {
         "1.3.60-eap-76"(
@@ -40,6 +42,17 @@ defaultRepositories {
 enableFeaturePreview("GRADLE_METADATA")
 
 //region utils
+
+fun gradleWrapper(version: String, distribution: Wrapper.DistributionType) {
+    gradle.rootProject {
+        afterEvaluate {
+            tasks.named<Wrapper>("wrapper") {
+                gradleVersion = version
+                distributionType = distribution
+            }
+        }
+    }
+}
 
 typealias Version = String
 
