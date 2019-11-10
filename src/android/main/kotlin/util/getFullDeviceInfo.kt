@@ -23,13 +23,15 @@ actual fun getFullDeviceInfo(): String {
     /** Product. Name of the overall product */
     val product = android.os.Build.PRODUCT
 
-    return "====== SDK info ======\n" +
-            "version: $sdkVersion;\n" +
-            "user-visible version: $sdkUserVisible.\n" +
-            " \n" +
-            "====== Device info ======\n" +
-            "device: $device;\n" +
-            "model (raw): $model;\n" +
-            "model (processed): ${getDeviceModel()}\n" +
-            "overall product: $product."
+    return """
+        |====== SDK info ======
+        |version: $sdkVersion;
+        |user-visible version: $sdkUserVisible.
+        |
+        |====== Device info ======
+        |device: $device;
+        |model (raw): $model;
+        |model (processed): ${getDeviceModel()}
+        |overall product: $product.
+        |""".trimMargin()
 }

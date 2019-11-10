@@ -8,7 +8,6 @@ import app.R
 import io.WeatherApi
 import kotlinx.android.synthetic.main.weatherlist_row.view.*
 
-
 class WeatherListViewAdapter : RecyclerView.Adapter<WeatherListViewAdapter.ViewHolder>() {
     var weatherList = mutableListOf<WeatherApi.Weather>()
 

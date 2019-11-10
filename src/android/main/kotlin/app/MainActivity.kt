@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job
 
-
     private fun initializeWeatherList() {
         weatherListView.apply {
             layoutManager = LinearLayoutManager(context)
@@ -35,7 +34,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     inline fun <reified T> Any.safeCast() = this as? T
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

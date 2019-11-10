@@ -16,7 +16,6 @@ import org.junit.runner.RunWith
 @InternalAPI
 @RunWith(AndroidJUnit4::class)
 class UIRefreshingTests {
-
     @get:Rule
     var activityScenarioRule = activityScenarioRule<MainActivity>()
 

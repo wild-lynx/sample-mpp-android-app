@@ -1,6 +1,5 @@
 package util
 
-
 /**
  * Get just device model.
  *
@@ -14,4 +13,3 @@ expect fun getDeviceModel(): String
  * @return a string with the device information
  * */
 expect fun getFullDeviceInfo(): String
-
