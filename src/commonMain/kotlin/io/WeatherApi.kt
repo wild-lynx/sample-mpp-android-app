@@ -9,6 +9,7 @@ import io.ktor.client.request.url
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.Serializable
+import weatherApiKey
 
 class WeatherApi(private val engine: HttpClientEngine) {
     companion object {
