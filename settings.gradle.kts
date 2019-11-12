@@ -31,9 +31,9 @@ defaultRepositories {
     // val customBuildId = 2478816
     // maven("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:$customBuildId/artifacts/content/maven")
 
-    maven("https://kotlin.bintray.com/kotlin-dev")
-    maven("https://kotlin.bintray.com/kotlin-eap")
-    maven("https://kotlin.bintray.com/kotlinx")
+    kotlinDev()
+    kotlinEap()
+    kotlinx()
     google()
     mavenCentral()
     jcenter()
