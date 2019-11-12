@@ -6,12 +6,13 @@ import org.gradle.api.tasks.wrapper.Wrapper
 import org.gradle.kotlin.dsl.named
 import org.gradle.plugin.use.PluginDependencySpec
 
-typealias Version = String
-
 operator fun Version.invoke(vararg plugins: PluginDependencySpec) =
-    plugins.forEach { it.version(this) }
+    plugins.forEach { it.version(this.version) }
 
-fun Settings.gradleWrapper(version: String, distribution: Wrapper.DistributionType) {
+fun Settings.gradleWrapper(
+    version: String = GradleWrapper.version,
+    distribution: Wrapper.DistributionType = GradleWrapper.distribution
+) {
     gradle.rootProject {
         afterEvaluate {
             tasks.named<Wrapper>("wrapper") {

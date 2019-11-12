@@ -1,15 +1,15 @@
 rootProject.name = "sample-mpp-android-app"
 
-gradleWrapper("5.6.4", Wrapper.DistributionType.ALL)
+gradleWrapper()
 
 pluginManagement {
     plugins {
-        "1.3.60-eap-76"(
+        Kotlin(
             kotlin("multiplatform"),
             kotlin("android.extensions"),
             kotlin("plugin.serialization")
         )
-        "3.5.2"(
+        Android.Plugin(
             id("com.android.application"),
             id("com.android.library")
         )

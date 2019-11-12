@@ -50,8 +50,8 @@ android {
 
 dependencies {
     commonMainImplementation(enforcedPlatform(kotlin("bom")))
-    commonMainImplementation(enforcedPlatform(ktor("bom", "1.2.5")))
-    commonMainImplementation(enforcedPlatform(kotlinx("coroutines-bom", "1.3.2")))
+    commonMainImplementation(enforcedPlatform(ktor("bom", Ktor.version)))
+    commonMainImplementation(enforcedPlatform(kotlinx("coroutines-bom", Coroutines.version)))
 }
 
 kotlin {
@@ -92,24 +92,24 @@ kotlin {
                 implementation(kotlinx("serialization-runtime"))
                 implementation(ktor("client-serialization-jvm"))
                 implementation(ktor("client-okhttp"))
-                implementation(androidx("appcompat:appcompat", "1.1.0"))
-                implementation(androidx("recyclerview:recyclerview", "1.0.0"))
-                implementation(androidx("constraintlayout:constraintlayout", "1.1.3"))
-                implementation("com.jaredrummler:android-device-names:1.1.9") // GitHub: https://git.io/JeVpP
+                implementation(androidx("appcompat:appcompat", Android.AppCompat.version))
+                implementation(androidx("recyclerview:recyclerview", Android.RecyclerView.version))
+                implementation(androidx("constraintlayout:constraintlayout", Android.ConstraintLayout.version))
+                implementation("com.jaredrummler:android-device-names:" + AndroidDeviceNames.version)
             }
         }
         android("test") {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-junit"))
-                implementation("junit:junit:4.12")
+                implementation("junit:junit:" + JUnit.version)
             }
         }
         android("androidTest") {
             dependencies {
-                implementation(androidx("test:runner", "1.2.0"))
-                implementation(androidx("test.ext:junit-ktx", "1.1.1"))
-                implementation(androidx("test.espresso:espresso-core", "3.2.0"))
+                implementation(androidx("test:runner", Android.Test.Runner.version))
+                implementation(androidx("test.ext:junit-ktx", Android.Test.JUnit.Ktx.version))
+                implementation(androidx("test.espresso:espresso-core", Android.Test.Espresso.Core.version))
             }
         }
     }
