@@ -4,7 +4,7 @@ object GradleWrapper : Version("5.6.4") {
     val distribution = ALL
 }
 
-object Kotlin : Version("1.3.60-eap-76")
+object Kotlin : Version("1.3.60-eap-143")
 
 object Coroutines : Version("1.3.2")
 
@@ -13,7 +13,7 @@ object Ktor : Version("1.2.5")
 object JUnit : Version("4.12")
 
 object Android {
-    object Plugin : Version("3.5.2")
+    object Plugin : Version("3.6.0-beta03")
 
     object AppCompat : Version("1.1.0")
 
