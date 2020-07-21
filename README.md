@@ -6,8 +6,10 @@ Already has:
 * An activity with the device header;
 * Common code service loading some data from some open API ([Open Weather API](https://openweathermap.org/api));
 * Usage of serialization and coroutines;
+
+To be implemented:
 * unit-tests coverage for Android-specific code.
 
 # Building
 To use the app, create your own Open Weather API key.
-In `commonMain/kotlin` package, edit `ApiKey.kt.dummy` placeholder: remove `.dummy` extension, copy-paste your API key into the file.
+In `io` package of `commonMain`, create `weatherApiKey` string and copy-paste your API key there.
